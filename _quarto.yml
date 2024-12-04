@@ -1,5 +1,6 @@
 project:
   type: website
+
 website:
  title: "Data Science Blog"
  description: "DAT303 Final Project and Portfolio"
@@ -10,12 +11,8 @@ website:
      href: https://github.com/culverjamie/
    - icon: linkedin
      href: https://linkedin.com/in/jamie-culver-a924a12aa/
+
 format:
  html:
    theme: cosmo
    css: styles.css
-publish:
- gh-pages:
-   branch: gh-pages
-
-
