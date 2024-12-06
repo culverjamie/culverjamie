@@ -1,4 +1,4 @@
-name: module9
+name: blog1
 channels:
 - conda-forge
 - defaults
