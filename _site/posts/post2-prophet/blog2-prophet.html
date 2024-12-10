@@ -6,10 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2024-10-25">
-<meta name="description" content="An investigation into online misinformation and how data science is involved.">
+<meta name="dcterms.date" content="2024-12-05">
+<meta name="description" content="An exploration of how Prophet time series forecasting works in python.">
 
-<title>The Age of Misinformation. A Data Scientist’s Role. – Data Science Blog</title>
+<title>Exploring Prophet Library – Data Science Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -152,14 +152,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">The Age of Misinformation. A Data Scientist’s Role.</h1>
+      <h1 class="title">Exploring Prophet Library</h1>
                   <div>
         <div class="description">
-          An investigation into online misinformation and how data science is involved.
+          An exploration of how Prophet time series forecasting works in python.
         </div>
       </div>
                           <div class="quarto-categories">
                 <div class="quarto-category">Python</div>
+                <div class="quarto-category">Prediction</div>
+                <div class="quarto-category">Libraries</div>
               </div>
                   </div>
   </div>
@@ -171,7 +173,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">October 25, 2024</p>
+        <p class="date">December 5, 2024</p>
       </div>
     </div>
     
@@ -190,28 +192,53 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>The Age of Misinformation: A Data Scientist’s Role</p>
-<p>Numbers have an inherit power to them. They bring a sense power and credibility to the arguement, whether it is genuine or not. Be in an advertisement, news article, or post on social media, the inclusion of statistics makes us more inclined to believe the information at face value. This perception stems from the beleif that “the facts” are objective and immune to manipulation.</p>
-<p>The reality is that numbers are so easily manipulated. They can be selective to show exactly what a company wants, misrepresented in visuals to seem more or less extreme, or be flat out changed to shape the result. Context, methodology, and interpretation are purposefully hidden or ignored for the sake of convincing consumers.</p>
-<p>In this post I’ll be exploring and demonstrating how simple it is to manipulate data into fitting my narrative. Hopefully this will make people approach data and statistics in media with a critical eye.</p>
-<p>For this example I’ll be working on a titanic dataset. This is a labeled dataset meaning we know the correct answers for our predictor variable “Surived”. In addition, because the dataset is historical, we know the data to be unbiased. This specific dataset does not include all the people on the titanic, but it is a random sample of the full data. To start I’m importing my libraries, doing simple exploration, and cleaning where needed.</p>
-<div id="cell-4" class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import our libraries</span></span>
+<section id="exploring-prophet-library" class="level1">
+<h1>Exploring Prophet Library</h1>
+<p>Prophet is an open source library for Python and R developed by Facebook. It uses sklearn to operate and it is designed to make time series analysis simple, easy to interpret, and maintain robust outputs. It is also less computationally expensive and runs much faster than other algorithms. This makes the library appealing for quick and easy but accurate predictions in all sorts of applications. I’ll be diving in to the basics of how the library works so it can be used in practice.</p>
+<section id="how-it-works" class="level3">
+<h3 class="anchored" data-anchor-id="how-it-works">How It Works</h3>
+<p>Prophet is built off of a fairly simple equation. Each part is explained below.</p>
+<section id="yt-ct-st-ht-xt-e" class="level4">
+<h4 class="anchored" data-anchor-id="yt-ct-st-ht-xt-e">y(t) = c(t) + s(t) + h(t) + x(t) + E</h4>
+<ul>
+<li>y: predictor variable</li>
+<li>t: time</li>
+<li>c: trend, overall direction, piecewise (linear with changepoints) or logistic growth.</li>
+<li>s: seasonal affects, recurring patterns found at regular intervals.</li>
+<li>h: holiday affects, domain specific recurring patterns surrounding holidays.</li>
+<li>x: external regressors, accounts for factors outside the time series that may affect y.</li>
+<li>E: error, residuals resulting from noise or patterns not captured in the other parts.</li>
+</ul>
+</section>
+</section>
+<section id="getting-started" class="level3">
+<h3 class="anchored" data-anchor-id="getting-started">Getting Started</h3>
+<p>Prophet was built with ease of use in mind, its not difficult to get started. There are a few rules to follow but past that its straightforward. - Prophet requires a date column formatted as YYYY-MM-DD. - This column must be called ‘ds’ for the Prophet object to recognize it. - The predictor variable column must be called ‘y’. - Other columns/regressors can be added to the data frame using the add_regressor() function. We won’t do this in our example to keep it straightfoward.</p>
+<div id="cell-5" class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import libraries</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score, classification_report, confusion_matrix</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># check out our dataset</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"titanic.csv"</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.shape)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>df.head(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>(891, 5)</code></pre>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> prophet <span class="im">import</span> Prophet</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># import data</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"car_sales.csv"</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># rename for compatibility</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>df.rename(columns<span class="op">=</span>{<span class="st">"Date"</span>: <span class="st">"ds"</span>}, inplace<span class="op">=</span><span class="va">True</span>) </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>df.rename(columns<span class="op">=</span>{<span class="st">"Price ($)"</span>: <span class="st">"y"</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># drop columns we won't use in this demo</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[[<span class="st">"ds"</span>, <span class="st">"y"</span>]]</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># verify</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>c:\Users\jamie\miniconda3\envs\blog2\Lib\site-packages\tqdm\auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+  from .autonotebook import tqdm as notebook_tqdm
+Importing plotly failed. Interactive plots will not work.</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="19">
+<div class="cell-output cell-output-display" data-execution_count="2">
 <div>
 
 
@@ -219,53 +246,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">Survived</th>
-<th data-quarto-table-cell-role="th">Pclass</th>
-<th data-quarto-table-cell-role="th">Gender</th>
-<th data-quarto-table-cell-role="th">Age</th>
-<th data-quarto-table-cell-role="th">Fare</th>
+<th data-quarto-table-cell-role="th">ds</th>
+<th data-quarto-table-cell-role="th">y</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">0</td>
-<td>0</td>
-<td>3</td>
-<td>male</td>
-<td>22.0</td>
-<td>7.2500</td>
+<td>1/2/2022</td>
+<td>26000</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">1</td>
-<td>1</td>
-<td>1</td>
-<td>female</td>
-<td>38.0</td>
-<td>71.2833</td>
+<td>1/2/2022</td>
+<td>19000</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">2</td>
-<td>1</td>
-<td>3</td>
-<td>female</td>
-<td>26.0</td>
-<td>7.9250</td>
+<td>1/2/2022</td>
+<td>31500</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">3</td>
-<td>1</td>
-<td>1</td>
-<td>female</td>
-<td>35.0</td>
-<td>53.1000</td>
+<td>1/2/2022</td>
+<td>14000</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">4</td>
-<td>0</td>
-<td>3</td>
-<td>male</td>
-<td>35.0</td>
-<td>8.0500</td>
+<td>1/2/2022</td>
+<td>24500</td>
 </tr>
 </tbody>
 </table>
@@ -273,137 +282,145 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="cell-5" class="cell" data-execution_count="20">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Missing values per column:</span><span class="ch">\n</span><span class="sc">{</span>df<span class="sc">.</span>isna()<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Column dtypes:</span><span class="ch">\n</span><span class="sc">{</span>df<span class="sc">.</span>dtypes<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-6" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># convert to datetime</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'ds'</span>] <span class="op">=</span> pd.to_datetime(df[<span class="st">'ds'</span>], <span class="bu">format</span><span class="op">=</span><span class="st">'%m/</span><span class="sc">%d</span><span class="st">/%Y'</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># verify</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df[<span class="st">'ds'</span>].head())</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df[<span class="st">'ds'</span>].dtype)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Missing values per column:
-Survived    0
-Pclass      0
-Gender      0
-Age         0
-Fare        0
-dtype: int64
-Column dtypes:
-Survived      int64
-Pclass        int64
-Gender       object
-Age         float64
-Fare        float64
-dtype: object</code></pre>
+<pre><code>0   2022-01-02
+1   2022-01-02
+2   2022-01-02
+3   2022-01-02
+4   2022-01-02
+Name: ds, dtype: datetime64[ns]
+datetime64[ns]</code></pre>
 </div>
 </div>
-<p>Luckily there are no missing values we have to fix. In this next step all I’m doing is changing the columns to be useable in our models later on. 0 will represent Male passengers and 0 1 will represent female passengers.</p>
-<div id="cell-7" class="cell" data-execution_count="21">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># including this next line to avoid errors from future version</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pd.set_option(<span class="st">'future.no_silent_downcasting'</span>, <span class="va">True</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># changing column "Gender" to boolean values. </span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"Gender"</span>] <span class="op">=</span> df[<span class="st">"Gender"</span>].replace({<span class="st">"male"</span>: <span class="dv">0</span>, <span class="st">"female"</span>: <span class="dv">1</span>})</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df[<span class="st">"Gender"</span>].value_counts())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Gender
-0    577
-1    314
-Name: count, dtype: int64</code></pre>
+<p>Prophet is sensitive to outliers so were going to check for those in ‘y’ before continuing. The dataset is large enough that we’ll remove any outliers.</p>
+<div id="cell-8" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pre filter max</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'y'</span>].<span class="bu">max</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>85800</code></pre>
 </div>
 </div>
-<p>For the last step in cleaning, we’ll be checking the “Fare” column for any outliers because that could have a huge affect on our model.</p>
-<div id="cell-9" class="cell" data-execution_count="24">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we'll be using a box and whisker plot for outlier detection</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>plt.boxplot(df[<span class="st">"Fare"</span>].dropna(), patch_artist<span class="op">=</span><span class="va">True</span>, boxprops<span class="op">=</span><span class="bu">dict</span>(facecolor<span class="op">=</span><span class="st">"blue"</span>))</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Fare Outliers"</span>)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Fare"</span>)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>plt.grid(axis<span class="op">=</span><span class="st">'x'</span>)</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-9" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check for outliers</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>sns.boxplot(y<span class="op">=</span>df[<span class="st">'y'</span>])</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Pre Filter Outliers"</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="blog3_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="blog2-prophet_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Unfortunately, there are many outliers on the high end for fares. For this dataset, it would not be appropriate to remove or replace any of our outliers because we could be losnig valueable information about what influences the predictor variable “Survived”. However, we still need to perform outlier detection to understand the impact it will have on our model later. Knowing we have so many high end outliers in our data could provide insight when we evaluate later on</p>
-<p>Now that our dataset is ready, we’re going to make a simple train/test split to use in our models. Our predictor variable will be “Survived”, where 0 represents a passenger did not live and 1 represents a survivor. I’m using a decision tree that is limited to 3 splits for the sake of a simple visualization.</p>
-<div id="cell-12" class="cell" data-execution_count="26">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> df.drop(columns<span class="op">=</span>[<span class="st">"Survived"</span>]) <span class="co"># drop y variable, keep the rest</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df[<span class="st">"Survived"</span>]</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># train/test split. 80 train, 20 test.</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>xtrain, xtest, ytrain, ytest <span class="op">=</span> train_test_split(x, y, test_size<span class="op">=</span> <span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"xtrain shape: </span><span class="sc">{</span>xtrain<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"ytrain shape: </span><span class="sc">{</span>ytrain<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"xtest shape: </span><span class="sc">{</span>xtest<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"ytest shape: </span><span class="sc">{</span>ytest<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co"># creating and fitting our model</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>mdl1 <span class="op">=</span> LogisticRegression(random_state<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>mdl1.fit(xtrain, ytrain)</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co"># create predictions</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>ypred <span class="op">=</span> mdl1.predict(xtest)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-10" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set IQR boundaries</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>q1 <span class="op">=</span> df[<span class="st">"y"</span>].quantile(<span class="fl">0.25</span>) </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>q3 <span class="op">=</span> df[<span class="st">"y"</span>].quantile(<span class="fl">0.75</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>IQR <span class="op">=</span> q3 <span class="op">-</span> q1</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># set upper and lower bound</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>lower_bound <span class="op">=</span> q1 <span class="op">-</span> <span class="fl">1.5</span> <span class="op">*</span> IQR</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>upper_bound <span class="op">=</span> q3 <span class="op">+</span> <span class="fl">1.5</span> <span class="op">*</span> IQR</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># remove the outliers</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[(df[<span class="st">'y'</span>] <span class="op">&gt;=</span> lower_bound) <span class="op">&amp;</span> (df[<span class="st">'y'</span>] <span class="op">&lt;=</span> upper_bound)]</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co"># reset index to account for removed rows</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>df.reset_index(drop<span class="op">=</span><span class="va">True</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co"># verify changes</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>sns.boxplot(y<span class="op">=</span>df[<span class="st">'y'</span>])</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Post Filter Outliers"</span>)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="blog2-prophet_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="cell-11" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># post filter max</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'y'</span>].<span class="bu">max</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>57990</code></pre>
+</div>
+</div>
+<p>The default setting of IQR, upper bound, and lower bounds didn’t catch all of the outliers but it significantly reduced them. While a car price of $57,990 is still decently high, its much more reasonable than the pre-filter max of $85,800. We’ll leave post-filter outliers alone.</p>
+<p>Now we’ll create our train and test split for the modeling. For time series analysis this looks a little different than what were used to. We’ll need to split our data by a certain date to accurately represent the type of predictions it would be used for in practice.</p>
+<div id="cell-14" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df[<span class="st">'ds'</span>].<span class="bu">min</span>()) <span class="co"># earliest date in data</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df[<span class="st">'ds'</span>].<span class="bu">max</span>()) <span class="co"># latest date in data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>xtrain shape: (712, 4)
-ytrain shape: (712,)
-xtest shape: (179, 4)
-ytest shape: (179,)</code></pre>
+<pre><code>2022-01-02 00:00:00
+2023-12-31 00:00:00</code></pre>
 </div>
 </div>
-<p>Now that our model has ran we’re going to look at it’s performance. Please note that LogisticRegression is being used here for the sake of simplicity for our example. LogisticRegression assumes the variables are independent of each other, meaning one value has no affect on the others. For our dataset, the x variables are independent so we don’t have to worry about that. It is also sensitive to outliers. We screened our float value, “Fare” for outliers earlier and found many. However, as discussed earlier, it is not appropriate to remove these so we will be evaluating with that in mind.</p>
-<p>We’ll be looking at the overall accuracy score and a confusion matrix to evaluate. The accuracy score is straightforward, its the number of correct predictions over the total points predicted.</p>
-<div id="cell-14" class="cell" data-execution_count="25">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>accuracy <span class="op">=</span> accuracy_score(ytest, ypred)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Accuracy of Model 1: </span><span class="sc">{</span>accuracy<span class="sc">:.5f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The dataset spans about 2 years. At 730 days total, to make our train subset be 80% of the data, our split date will be August 7th, 2023. Anything beyond that point will be our test set.</p>
+<div id="cell-16" class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>df.index <span class="op">=</span> pd.to_datetime(df.index)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>split_date <span class="op">=</span> <span class="st">"2023-08-07"</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>dftrain <span class="op">=</span> df[df[<span class="st">'ds'</span>] <span class="op">&lt;=</span> split_date] <span class="co"># Aug. 7th and earlier</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>dftest <span class="op">=</span> df[df[<span class="st">'ds'</span>] <span class="op">&gt;</span> split_date] <span class="co"># Aug. 8th and later</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># verify split correctly</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"dftrain shape: </span><span class="sc">{</span>dftrain<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"dftest shape: </span><span class="sc">{</span>dftest<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Accuracy of Model 1: 0.79888</code></pre>
+<pre><code>dftrain shape: (15518, 2)
+dftest shape: (6939, 2)</code></pre>
 </div>
 </div>
-<p>Although far from perfect, a (rounded) accuracy score of 80% is a fairly good performance for our LogisticRegression model. In other words, our model correctly predicted 143 points of our 179 included in ytest. I’ll discuss this more later, but note that even our labeled, unedited data fails to predict points perfectly.</p>
-<p>Next we’ll be looking at a confusion matrix. This provides a simple visual to see how our model is predicting points. This will provide insight into what types of points the model is best at predicting and where it struggles.</p>
-<div id="cell-17" class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>conf_matrix <span class="op">=</span> confusion_matrix(ytest, ypred)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(conf_matrix)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-17" class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize Prophet object and fit model</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> Prophet()</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>model.fit(dftrain)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>11:46:29 - cmdstanpy - INFO - Chain [1] start processing
+11:46:31 - cmdstanpy - INFO - Chain [1] done processing</code></pre>
 </div>
-<p>issues: - despite using ‘pure’ data, where we know the answers, the predictor model is not 100% accurate because errors are going to happen no matter what - this alone is enough to be skeptical of peoples numbers - but it can get so much worse too</p>
-<p>introduce falsifying data - now say the titanic happened today, and we work for a news outlet that wants to push the idea that the famous line ‘women and children’ was true, regardless of class/ticket - the real data did not look good for this claim, or we want it to look even better - so i’ll edit the data to show all women survived the crash</p>
-<div id="cell-20" class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># edit the column survived on a new df</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="22">
+<pre><code>&lt;prophet.forecaster.Prophet at 0x1eec967e8d0&gt;</code></pre>
 </div>
-<p>now we’ll run the same decision tree, same parameters, on our edited dataset</p>
-<div id="cell-22" class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># run model</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># print same metrics</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<ul>
-<li><p>changes the results completely</p></li>
-<li><p>pushes our narrative</p></li>
-<li><p>took 2 seconds to change the entire story</p></li>
-<li><p>for this demonstration we know its not true, and its historical data so changing results doesn’t really have an impact</p></li>
-<li><p>but say we instead worked for an insurance company, and we were told to decrease the amount paid out on claims. or we worked in sales and our boss asked us to make the sales figures look better.</p></li>
-<li><p>then it actually impacts people. claims who really need it are rejected and the boss looks good on paper while the business is actually failing</p></li>
-<li><p>it becomes the ethical responsibility of data scientists to uphold truthful data and results</p></li>
-<li><p>need to ensure the data source is good</p>
-<ul>
-<li>reference the LA police deployment issue</li>
-</ul></li>
-</ul>
-<div id="cell-26" class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># breifly show code here if you can find the dataset/link to an article about it to break up the text</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The make_future_dataframe() function is what allows us to set how far ahead our analysis will go. This creates a seperate data frame for our predictions.</p>
+<div id="cell-19" class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make predictions</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>future <span class="op">=</span> model.make_future_dataframe(periods<span class="op">=</span><span class="dv">20</span>, freq<span class="op">=</span><span class="st">'ME'</span>) <span class="co"># periods selects how far out the forecast goes</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>forecast <span class="op">=</span> model.predict(future)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<ul>
-<li><p>it is unethical to change the data for your own gain</p></li>
-<li><p>causes issues in real life, rapid spread of misinformation</p></li>
-<li><p>not only an issue with numbers, but journalism have had this issue forever. numbers just make it more believeable</p></li>
-<li><p>also the NEW responsibility of people today, especially online, to be wary of the numbers/data because its not always true</p></li>
-<li><p>need to watch for the source of the data, the scale in how its displayed, what its being compared to, etc</p></li>
-<li><p>all too easy to make stuff up, to safely navigate the internet people need to understand this</p></li>
-<li><p>data scientist job to not make it any harder on people</p></li>
-</ul>
+<div id="cell-20" class="cell" data-execution_count="49">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot predictions</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>model.plot_components(forecast)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="blog2-prophet_files/figure-html/cell-12-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="analysis" class="level4">
+<h4 class="anchored" data-anchor-id="analysis">Analysis</h4>
+<p>On the top graph of the result there is a solid blue line that represents the actual values. The lighter blue shaded area represents the margin of error accounted for in predictions. Our model predicted the remaininig dates in the test set and out till April of 2025.</p>
+<p>The dates closer to the split point has much less margin of error and it spreads out significantly the further ahead it goes. The further from the data we have, the less accurate the predictions will be. On the test set portion from August 8th, 2023, to December 31st, 2024, the model predicted it fairly well. Especially the points to the end of 2023 did really well.</p>
+<p>The bottom graph represents the day of the week with the most sales on average. Its clear that mid-week (Wednesday) and the end of the week (Friday) expect to have more sales than the rest of the week. For the weekends, it’s harder to interpret because the seperation in the graph. But we can see that the massive dip in Saturday sales is recovered by Monday, indicating the possibility some of the dealerships are closed on the weekends.</p>
 
 
+</section>
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -498,7 +515,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp("https:\/\/culverjamie\.github\.io\/culverjamie\/");
+      var filterRegex = new RegExp('/' + window.location.host + '/');
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
