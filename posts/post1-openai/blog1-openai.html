@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2024-11-29">
+<meta name="description" content="A beginners guide to using OpenAI’s API for simple query.">
 
-<title>dat303-blog – Data Science Blog</title>
+<title>Using OpenAI’s API – Data Science Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,27 +22,59 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-3a01e2046221230fdceeea94b1ec5d67.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-fcdb495442a5b5950f9ad8e153208442.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-3a01e2046221230fdceeea94b1ec5d67.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-fcdb495442a5b5950f9ad8e153208442.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -68,77 +102,19 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Data Science Blog</span>
     </a>
   </div>
@@ -149,7 +125,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item compact">
@@ -172,152 +148,156 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <h1 class="title">dat303-blog</h1>
-                      </div>
+    <div class="quarto-title column-body">
+      <h1 class="title">Using OpenAI’s API</h1>
+                  <div>
+        <div class="description">
+          A beginners guide to using OpenAI’s API for simple query.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Python</div>
+                <div class="quarto-category">LLMs</div>
+                <div class="quarto-category">Machine Learning</div>
+              </div>
+                  </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page-left">
+  <div class="quarto-title-meta">
 
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">November 29, 2024</p>
+      </div>
+    </div>
     
       
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(3)</span></div><div class="category" data-category="Ethics">Ethics <span class="quarto-category-count">(1)</span></div><div class="category" data-category="LLMs">LLMs <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Libraries">Libraries <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Machine Learning">Machine Learning <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Prediction">Prediction <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Python">Python <span class="quarto-category-count">(3)</span></div><div class="category" data-category="Think Piece">Think Piece <span class="quarto-category-count">(1)</span></div></div></div>
+    
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
 
 
+<section id="using-openais-api" class="level1">
+<h1>Using OpenAI’s API</h1>
+<p>OpenAI (known for ChatGPT) has a public API available for queries at a low cost of entry. It is perfect for personal use to keep yourself organized, as a study aide, to draft essays or code, generate creative prompts, assist with summarizing searches, and many more tasks. In this post, I’ll introduce a simple query demonstrating how to access the API.</p>
+<section id="create-openai-account" class="level3">
+<h3 class="anchored" data-anchor-id="create-openai-account">1. Create OpenAI Account</h3>
+<p>Head to the OpenAI website and click to create an account if you don’t already have one. If you have an account from using ChatGPT, log in with the same information. Navigate to the OpenAI Developer Platform page through the products dropdown on the homepage.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="blog1-openai_files/figure-html/cell-3-1-image.png" class="img-fluid figure-img"></p>
+<figcaption>image.png</figcaption>
+</figure>
+</div>
+</section>
+<section id="api-key-section" class="level3">
+<h3 class="anchored" data-anchor-id="api-key-section">2. API Key Section</h3>
+<section id="billing" class="level4">
+<h4 class="anchored" data-anchor-id="billing">Billing</h4>
+<p>Once logged in and on the developer page, navigate to the upper right corner and select your profile. Under the “Organization” subheading, select “Billing.” To use this API, each query uses a small amount of credits. The minimum purchase is $5 worth of credits which users report is an average of 750 queries.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="blog1-openai_files/figure-html/cell-4-1-image.png" class="img-fluid figure-img"></p>
+<figcaption>image.png</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="generate-key" class="level3">
+<h3 class="anchored" data-anchor-id="generate-key">3. Generate Key</h3>
+<p>Once you have credits to use, navigate to the “API Keys” section under the “Organization” sub-heading. Click the green “Create new secret key” button.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="blog1-openai_files/figure-html/cell-5-1-1.1.png" class="img-fluid figure-img"></p>
+<figcaption>1.1.png</figcaption>
+</figure>
+</div>
+<p>Here you can assign a name, add to a project directory, and set any necessary restrictions. Click the green button at the bottom to continue.</p>
+<p>On the next window, you’ll receive the key. Make sure to copy and store this in a safe place because you will be unable to access it through the OpenAI website once you close this window. I’ve stored mine in Google Drive.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="blog1-openai_files/figure-html/cell-5-2-1.2.png" class="img-fluid figure-img"></p>
+<figcaption>1.2.png</figcaption>
+</figure>
+</div>
+<section id="using-the-api" class="level4">
+<h4 class="anchored" data-anchor-id="using-the-api">Using the API</h4>
+<p>After generating our unique key and purchasing credits, we’re ready to use the API. We’ll start by importing our libraries. OpenAI can be pip installed or included in a conda environment. Set your API key to the same variable name as below otherwise, you won’t be able to use it. You can also use the Python package ‘os’ to interact with your operating system and increase security.</p>
+<div id="cell-8" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import libraries</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> openai</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># set api key variable</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>openai.api_key <span class="op">=</span> (<span class="st">"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"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Querying ChatGPT is relatively simple. Use the method “openai.ChatCompletion.create()” to connect with ChatGPT’s model. In this example, I’m using GPT 3.5 Turbo. This version is the most cost-effective for simple queries.</p>
+<p>In the method, we’ll reference two different “roles”. These represent the user input and the chatbot. User input is “user” and the chatbot is “system”.</p>
+<p>The next piece of the call is “content”. For the user role, this is simply the question or prompt we are asking. For the system role, this is where you’ll provide the chatbot with the persona, tone, and knowledge constraints, enforce content boundaries, and overall guide how the answers will be. In this example, I’ll be asking a coding question and looking for a short, simple response.</p>
+<p>The final part of using the API is printing the result. The first part in quotes is optional to give context to the return. - Response is the answer generated by ChatGPT. It is stored in a dictionary key pair. - [“choices”] is part of the response dictionary that maps to the answers provided by the model. - [0] is the index of the query we are extracting. - [“message”] contains the role and content response from ChatGPT. - [“content”] extracts the actual text response.</p>
+<div id="cell-11" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># establish connection and send query</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> openai.ChatCompletion.create(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    model<span class="op">=</span><span class="st">"gpt-3.5-turbo"</span>,  <span class="co"># specify the model</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    messages<span class="op">=</span>[</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"role"</span>: <span class="st">"system"</span>, <span class="st">"content"</span>: <span class="st">"You are a beginner-level Python instructor. Keep answers below 200 words."</span>},  <span class="co"># system role</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: <span class="st">"Explain how to format a dictionary in Python."</span>}  <span class="co"># user input</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        ])</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># return response</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"ChatGPT says:"</span>, response[<span class="st">"choices"</span>][<span class="dv">0</span>][<span class="st">"message"</span>][<span class="st">"content"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>ChatGPT says: In Python, dictionaries are formatted using curly braces {} and key-value pairs separated by a colon. Here's an example:
+
+```python
+# Creating a dictionary
+my_dict = {
+    "name": "Alice",
+    "age": 30,
+    "city": "New York"
+}
+
+# Accessing values in the dictionary
+print(my_dict["name"])  # Output: Alice
+print(my_dict["age"])   # Output: 30
+print(my_dict["city"])  # Output: New York
+
+# Adding a new key-value pair
+my_dict["occupation"] = "Engineer"
+
+# Updating a value
+my_dict["age"] = 31
+
+# Removing a key-value pair
+del my_dict["city"]
+
+# Iterating through key-value pairs
+for key, value in my_dict.items():
+    print(key, ":", value)
+```
+
+Remember, dictionaries are mutable, unordered collections in Python that store data in key-value pairs.</code></pre>
+</div>
+</div>
+<p>ChatGPT model successfully returned an answer to our query fitting the tone of an instructor and staying within the word limit. Now you understand how to access the API, and the different parts of the call, and are on your way to integrating ChatGPT into your Python code.</p>
 
 
+</section>
+</section>
+</section>
 
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="Python,Prediction,Libraries" data-listing-date-sort="1733378400000" data-listing-file-modified-sort="1733854112048" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="621">
-<div class="thumbnail">
-<p><a href="./posts/post2-prophet/blog2-prophet.html" class="no-external"></a></p><a href="./posts/post2-prophet/blog2-prophet.html" class="no-external">
-<p class="card-img-top"><img src="posts\post2-prophet\blog2-prophet_files\figure-html\cell-5-output-1.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="./posts/post2-prophet/blog2-prophet.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/post2-prophet/blog2-prophet.html" class="no-external">Exploring Prophet Library</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/post2-prophet/blog2-prophet.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Python'); return false;">
-Python
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('Prediction'); return false;">
-Prediction
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('Libraries'); return false;">
-Libraries
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/post2-prophet/blog2-prophet.html" class="no-external">An exploration of how Prophet time series forecasting works in python.</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/post2-prophet/blog2-prophet.html" class="no-external">
-<div class="listing-date">
-Dec 5, 2024
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="Python,LLMs,Machine Learning" data-listing-date-sort="1732860000000" data-listing-file-modified-sort="1733850375470" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="576">
-<div class="thumbnail">
-<p><a href="./posts/post1-openai/blog1-openai.html" class="no-external"></a></p><a href="./posts/post1-openai/blog1-openai.html" class="no-external">
-<p class="card-img-top"><img src="posts\post1-openai\blog1-openai_files\figure-html\cell-3-1-image.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="./posts/post1-openai/blog1-openai.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/post1-openai/blog1-openai.html" class="no-external">Using OpenAI’s API</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/post1-openai/blog1-openai.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Python'); return false;">
-Python
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('LLMs'); return false;">
-LLMs
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('Machine Learning'); return false;">
-Machine Learning
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/post1-openai/blog1-openai.html" class="no-external">A beginners guide to using OpenAI’s API for simple query.</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/post1-openai/blog1-openai.html" class="no-external">
-<div class="listing-date">
-Nov 29, 2024
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="Python,Ethics,Think Piece" data-listing-date-sort="1729832400000" data-listing-file-modified-sort="1733854112236" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1510">
-<div class="thumbnail">
-<p><a href="./posts/post3-titanic/blog3.html" class="no-external"></a></p><a href="./posts/post3-titanic/blog3.html" class="no-external">
-<p class="card-img-top"><img src="posts\post3-titanic\blog3_files\figure-html\cell-5-output-1.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="./posts/post3-titanic/blog3.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/post3-titanic/blog3.html" class="no-external">The Age of Misinformation. A Data Scientist’s Role.</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/post3-titanic/blog3.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('Python'); return false;">
-Python
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('Ethics'); return false;">
-Ethics
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('Think Piece'); return false;">
-Think Piece
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/post3-titanic/blog3.html" class="no-external">An investigation into online misinformation and how data science is involved.</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/post3-titanic/blog3.html" class="no-external">
-<div class="listing-date">
-Oct 25, 2024
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
