@@ -1,5 +1,5 @@
 ---
-title: "dat303-blog"
+title: "Tech Jungle: My Exploration Through Data Science"
 listing:
   contents: posts
   sort: "date desc"
