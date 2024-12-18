@@ -194,7 +194,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="exploring-prophet-library" class="level1">
 <h1>Exploring Prophet Library</h1>
-<p>Prophet is an open source library for Python and R developed by Facebook. It uses sklearn to operate and it is designed to make time series analysis simple, easy to interpret, and maintain robust outputs. It is also less computationally expensive and runs much faster than other algorithms. This makes the library appealing for quick and easy but accurate predictions in all sorts of applications. I’ll be diving in to the basics of how the library works so it can be used in practice.</p>
+<p>Prophet is an open-source library for Python and R developed by Facebook. It uses sklearn to operate, and it is designed to make time series analysis simple, easy to interpret, and maintain robust outputs. It is also less computationally expensive and runs much faster than other algorithms. This makes the library appealing for quick and easy but accurate predictions in all sorts of applications. I’ll be diving into the basics of how the library works so it can be used in practice.</p>
 <section id="how-it-works" class="level3">
 <h3 class="anchored" data-anchor-id="how-it-works">How It Works</h3>
 <p>Prophet is built off of a fairly simple equation. Each part is explained below.</p>
@@ -204,8 +204,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>y: predictor variable</li>
 <li>t: time</li>
 <li>c: trend, overall direction, piecewise (linear with changepoints) or logistic growth.</li>
-<li>s: seasonal affects, recurring patterns found at regular intervals.</li>
-<li>h: holiday affects, domain specific recurring patterns surrounding holidays.</li>
+<li>s: seasonal effects, recurring patterns found at regular intervals.</li>
+<li>h: holiday effects, domain-specific recurring patterns surrounding holidays.</li>
 <li>x: external regressors, accounts for factors outside the time series that may affect y.</li>
 <li>E: error, residuals resulting from noise or patterns not captured in the other parts.</li>
 </ul>
@@ -213,7 +213,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="getting-started" class="level3">
 <h3 class="anchored" data-anchor-id="getting-started">Getting Started</h3>
-<p>Prophet was built with ease of use in mind, its not difficult to get started. There are a few rules to follow but past that its straightforward. - Prophet requires a date column formatted as YYYY-MM-DD. - This column must be called ‘ds’ for the Prophet object to recognize it. - The predictor variable column must be called ‘y’. - Other columns/regressors can be added to the data frame using the add_regressor() function. We won’t do this in our example to keep it straightfoward.</p>
+<p>Prophet was built with ease of use in mind, its not difficult to get started. There are a few rules to follow but past that its straightforward. - Prophet requires a date column formatted as YYYY-MM-DD. - This column must be called ‘ds’ for the Prophet object to recognize it. - The predictor variable column must be called ‘y’. - Other columns/regressors can be added to the data frame using the add_regressor() function. We won’t do this in our example to keep it straightforward.</p>
 <div id="cell-5" class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import libraries</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -299,7 +299,7 @@ Name: ds, dtype: datetime64[ns]
 datetime64[ns]</code></pre>
 </div>
 </div>
-<p>Prophet is sensitive to outliers so were going to check for those in ‘y’ before continuing. The dataset is large enough that we’ll remove any outliers.</p>
+<p>Prophet is sensitive to outliers, so we’re going to check for those in ‘y’ before continuing. The dataset is large enough that we’ll remove any outliers.</p>
 <div id="cell-8" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pre filter max</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'y'</span>].<span class="bu">max</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -356,7 +356,7 @@ datetime64[ns]</code></pre>
 </div>
 </div>
 <p>The default setting of IQR, upper bound, and lower bounds didn’t catch all of the outliers but it significantly reduced them. While a car price of $57,990 is still decently high, its much more reasonable than the pre-filter max of $85,800. We’ll leave post-filter outliers alone.</p>
-<p>Now we’ll create our train and test split for the modeling. For time series analysis this looks a little different than what were used to. We’ll need to split our data by a certain date to accurately represent the type of predictions it would be used for in practice.</p>
+<p>Now we’ll create our train and test split for the modeling. For time series analysis, this looks a little different than what we’re used to. We’ll need to split our data by a certain date to accurately represent the type of predictions it would be used for in practice.</p>
 <div id="cell-14" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df[<span class="st">'ds'</span>].<span class="bu">min</span>()) <span class="co"># earliest date in data</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df[<span class="st">'ds'</span>].<span class="bu">max</span>()) <span class="co"># latest date in data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -365,7 +365,7 @@ datetime64[ns]</code></pre>
 2023-12-31 00:00:00</code></pre>
 </div>
 </div>
-<p>The dataset spans about 2 years. At 730 days total, to make our train subset be 80% of the data, our split date will be August 7th, 2023. Anything beyond that point will be our test set.</p>
+<p>The dataset spans about 2 years. At 730 days total, to make our train subset 80% of the data, our split date will be August 7th, 2023. Anything beyond that point will be our test set.</p>
 <div id="cell-16" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>df.index <span class="op">=</span> pd.to_datetime(df.index)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -413,9 +413,9 @@ dftest shape: (6939, 2)</code></pre>
 </div>
 <section id="analysis" class="level4">
 <h4 class="anchored" data-anchor-id="analysis">Analysis</h4>
-<p>On the top graph of the result there is a solid blue line that represents the actual values. The lighter blue shaded area represents the margin of error accounted for in predictions. Our model predicted the remaininig dates in the test set and out till April of 2025.</p>
-<p>The dates closer to the split point has much less margin of error and it spreads out significantly the further ahead it goes. The further from the data we have, the less accurate the predictions will be. On the test set portion from August 8th, 2023, to December 31st, 2024, the model predicted it fairly well. Especially the points to the end of 2023 did really well.</p>
-<p>The bottom graph represents the day of the week with the most sales on average. Its clear that mid-week (Wednesday) and the end of the week (Friday) expect to have more sales than the rest of the week. For the weekends, it’s harder to interpret because the seperation in the graph. But we can see that the massive dip in Saturday sales is recovered by Monday, indicating the possibility some of the dealerships are closed on the weekends.</p>
+<p>On the top graph of the result, there is a solid blue line that represents the actual values. The lighter blue shaded area represents the margin of error accounted for in predictions. Our model predicted the remaining dates in the test set and out till April 2025.</p>
+<p>The dates closer to the split point have much less margin of error and it spreads out significantly the further ahead it goes. The further from the data we have, the less accurate the predictions will be. On the test set portion from August 8th, 2023, to December 31st, 2024, the model predicted it fairly well. Especially the points to the end of 2023 did really well.</p>
+<p>The bottom graph represents the day of the week with the most sales on average. Clearly, mid-week (Wednesday) and the end of the week (Friday) expect to have more sales than the rest of the week. For the weekends, it’s harder to interpret because of the separation in the graph. But we can see that the massive dip in Saturday sales is recovered by Monday, indicating the possibility some of the dealerships are closed on the weekends.</p>
 
 
 </section>
@@ -515,7 +515,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/culverjamie\.github\.io\/culverjamie\/");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }

@@ -1,14 +1,10 @@
 [
   {
     "listing": "/index.html",
-<<<<<<< HEAD
     "items": [
       "/posts/post2-prophet/blog2-prophet.html",
       "/posts/post1-openai/blog1-openai.html",
       "/posts/post3-titanic/blog3.html"
     ]
-=======
-    "items": []
->>>>>>> ee0e33c7357d24a1d975d30fb450025cae6cea42
   }
 ]

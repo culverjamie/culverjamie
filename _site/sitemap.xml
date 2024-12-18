@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://culverjamie.github.io/culverjamie/index.html</loc>
-    <lastmod>2024-12-04T20:23:18.344Z</lastmod>
+    <loc>https://culverjamie.github.io/culverjamie/posts/post3-titanic/blog3.html</loc>
+    <lastmod>2024-12-10T18:08:32.236Z</lastmod>
+  </url>
+  <url>
+    <loc>https://culverjamie.github.io/culverjamie/posts/post1-openai/blog1-openai.html</loc>
+    <lastmod>2024-12-10T17:06:15.470Z</lastmod>
   </url>
   <url>
     <loc>https://culverjamie.github.io/culverjamie/about.html</loc>
     <lastmod>2024-12-04T20:23:18.344Z</lastmod>
+  </url>
+  <url>
+    <loc>https://culverjamie.github.io/culverjamie/index.html</loc>
+    <lastmod>2024-12-04T20:23:18.344Z</lastmod>
+  </url>
+  <url>
+    <loc>https://culverjamie.github.io/culverjamie/posts/post2-prophet/blog2-prophet.html</loc>
+    <lastmod>2024-12-10T18:08:32.048Z</lastmod>
   </url>
 </urlset>
